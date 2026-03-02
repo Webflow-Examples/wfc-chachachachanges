@@ -26,13 +26,3 @@ export async function GET({ request }) {
         },
     });
 }
-
-/*
-rss-parser doesn't work well on Cloudflare due to it's use of https versus fetch
-hence this workaround
-*/
-async function parseURL(u) {
-    let xmlReq = await fetch(u);
-    let xml = await xmlReq.text();
-    return parser.parseString(xml);
-}
