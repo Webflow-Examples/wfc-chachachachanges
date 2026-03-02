@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+
+  <style is:global>
+  .card {
+    border: 1px solid var(--border, #d8d8d8);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .card-header {
+    background-color: var(--accent-bg, #f2f2f2);
+    padding: 1rem;
+    border-bottom: 1px solid var(--border, #d8d8d8);
+  }
+  .card-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  .card-body {
+    padding: 1rem;
+  }
+  .card-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border, #d8d8d8);
+  }
+
+  #content {
+    padding-top: 25px;
+  }
+  </style>
+
+  <div id="content">
+    <p>
+    <i>Loading greatness...</i>
+    </p>
+  </div>
+
+  <script>
+  
+  document.addEventListener('DOMContentLoaded', async () => {
+
+    let $content = document.querySelector('#content');
+    // I had issues with the relative pathing - this SHOULD work. In WFC, I'm always at (root)/(path) with no / at the dn
+    let itemReq = await fetch (document.URL + '/changes.json');
+    let items = await itemReq.json();
+
+    let html = '';
+    items.forEach(i => {
+      html += `
+      <div class="card">
+        <div class="card-header">
+          <h2>${i.title}</h2>
+        </div>
+        <div class="card-body">
+          ${i.content}
+          <p><strong>Published:</strong> ${formatDate(i.pubDate)}</p>
+        </div>
+        <div class="card-footer">
+          <a href="${i.link}" target="_blank">Read More</a>
+        </div>
+      </div>
+      `;
+    })
+    console.log(items);
+
+    $content.innerHTML = html;
+  });
+
+  function formatDate(d) {
+    d = new Date(d);
+    return Intl.DateTimeFormat('en-US', {
+      dateStyle: 'long'
+    }).format(d);
+  }
+  </script>
+ 
+</Layout>
